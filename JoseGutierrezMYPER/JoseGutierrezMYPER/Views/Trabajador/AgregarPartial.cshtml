@@ -1,0 +1,77 @@
+﻿@model JoseGutierrezMYPER.Models.Trabajador
+
+@{
+    ViewData["Title"] = "AgregarStockProducto";
+}
+
+<h3>Agregar Producto</h3>
+<br />
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="AgregarStockProducto">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="TipoDocumento" class="control-label"></label>
+                <br />
+                @*@Html.DropDownList("TiposProductosList", (SelectList)ViewBag.TipoProducto)*@
+                <select id="drpEmpList" class="form-control" asp-for="TipoDocumento" asp-items="@((SelectList)ViewBag.TipoProducto)">
+                </select>
+                <span asp-validation-for="TipoDocumento" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NumeroDocumento" class="control-label"></label>
+                <input asp-for="NumeroDocumento" class="form-control" />
+                <span asp-validation-for="NumeroDocumento" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Nombres" class="control-label"></label>
+                <input asp-for="Nombres" class="form-control" />
+                <span asp-validation-for="Nombres" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Sexo" class="control-label"></label>
+                <input asp-for="Sexo" class="form-control" />
+                <span asp-validation-for="Sexo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Departamento" class="control-label"></label>
+                <br />
+                @*@Html.DropDownList("TiposProductosList", (SelectList)ViewBag.TipoProducto)*@
+                <select id="drpEmpList" class="form-control" asp-for="Departamento" asp-items="@((SelectList)ViewBag.TipoProducto)">
+                </select>
+                <span asp-validation-for="Departamento" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Provincia" class="control-label"></label>
+                <br />
+                @*@Html.DropDownList("TiposProductosList", (SelectList)ViewBag.TipoProducto)*@
+                <select id="drpEmpList" class="form-control" asp-for="Provincia" asp-items="@((SelectList)ViewBag.TipoProducto)">
+                </select>
+                <span asp-validation-for="Provincia" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Distrito" class="control-label"></label>
+                <br />
+                @*@Html.DropDownList("TiposProductosList", (SelectList)ViewBag.TipoProducto)*@
+                <select id="drpEmpList" class="form-control" asp-for="Distrito" asp-items="@((SelectList)ViewBag.TipoProducto)">
+                </select>
+                <span asp-validation-for="Distrito" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a class="btn btn-dark" style="margin-top:8px;" asp-action="MantenimientoStockProducto">Regresar a lista</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

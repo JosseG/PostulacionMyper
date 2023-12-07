@@ -1,0 +1,262 @@
+﻿@model IEnumerable<Trabajador>
+
+@{
+    ViewData["Title"] = "Lista de Trabajadores";
+}
+
+
+<div id="main-container" class="main-container">
+    <div id="container-trabajadores-id" class="container-trabajadores">
+
+        <h1 class="title_list">Trabajadores</h1>
+        <div class="button-active-create-container">
+            <button id="agregar" type="button" class="btn btn-secondary">Nuevo Registro</button>
+        </div>
+
+        <table class="table table-trabajadores">
+            <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.TipoDocumento)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.NumeroDocumento)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Nombres)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Sexo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DepartamentoId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ProvinciaId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DistritoId)
+                </th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TipoDocumento)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NumeroDocumento)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Nombres)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Sexo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Departamento.Nombre)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Provincia.Nombre)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Distrito.Nombre)
+                    </td>
+                    <td>
+                        <button type="button" class="actualizar" value="@item.Id" class="button-active-update" >Actualizar</button>
+                        <button>Eliminar</button>
+                    </td>
+
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+    <div id="empty-layout">
+    </div>
+</div>
+
+
+@section Scripts
+{
+    <script>
+
+
+        $(function () {
+            $(".actualizar").on("click", function (event) {
+                event.preventDefault();
+                var value = $(this).val();
+                console.log(value)
+                $.ajax(
+                    {
+                        url: "@Url.Action("Actualizar", "Trabajador")",
+                        data: {"id":parseInt(value)},
+                        type: "get",
+                        success: function (response) {
+                            $("#modalActualizar").html(response);
+                            $("#modalActualizar").modal("show");
+
+
+                            $("#departamentosList").change(function () {
+
+                                let val = $('#departamentosList option:selected').val();
+                                firstFunctionFilterUpdate(val);
+
+                            });
+
+                        },
+                        error: function (err, error) {
+                            alert(error);
+                        }
+                    }
+                );
+
+            });
+        });
+        $(function () {
+            $("#agregar").on("click", function (event) {
+                event.preventDefault();
+
+                $.ajax(
+                    {
+                        url: "@Url.Action("Guardar", "Trabajador")",
+                        type: "get",
+                        success: function (response) {
+                            $("#modalAgregar").html(response);
+                            $("#modalAgregar").modal("show");
+                            
+
+                            $("#departamentosList").change(function () {
+
+                                let val = $('#departamentosList option:selected').val();
+                                firstFunctionFilterSave(val);
+                            });
+                            
+                        },
+                        error: function (err, error) {
+                            alert(error);
+                        }
+                    }
+                );
+
+            });
+        });
+
+        function firstFunctionFilterSave(val) {
+            $.ajax(
+                {
+                    url: '@Url.Action("FiltrarDepartamentoProvincia", "Trabajador")',
+                    data: { "idDepartamento" : parseInt(val)},
+                    type: "get",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+                        var sel = $("#provinciasList");
+
+                        sel.empty();
+                        for (var i = 0; i < response.response.length; i++) {
+                            sel.append('<option value="' + response.response[i].value + '">' + response.response[i].text + '</option>');
+                        }
+                        $("#provinciasList").change(function () {
+                            valProvincia = $('#provinciasList option:selected').val()
+                            secondFunctionFilterSave(val, valProvincia)
+                        });
+
+
+                    },
+                    error: function (err, error) {
+                        alert(error);
+                    }
+                }
+            );
+        }
+
+        function secondFunctionFilterSave(val, valProvincia) {
+            $.ajax(
+                {
+                    url: '@Url.Action("FiltrarDepartamentoProvincia", "Trabajador")',
+                    data: { "idDepartamento": parseInt(val),"idProvincia":parseInt(valProvincia) },
+                    type: "get",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+                        var sel = $("#distritosList");
+
+                        sel.empty();
+                        for (var i = 0; i < response.response.length; i++) {
+                            sel.append('<option value="' + response.response[i].value + '">' + response.response[i].text + '</option>');
+                        }
+                    },
+                    error: function (err, error) {
+                        alert(error);
+                    }
+                }
+            );
+        }
+
+
+
+        function firstFunctionFilterUpdate(val) {
+            $.ajax(
+                {
+                    url: '@Url.Action("FiltrarDepartamentoProvincia", "Trabajador")',
+                    data: { "idDepartamento": parseInt(val) },
+                    type: "get",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+                        var sel = $("#provinciasList");
+
+                        sel.empty();
+                        for (var i = 0; i < response.response.length; i++) {
+                            sel.append('<option value="' + response.response[i].value + '">' + response.response[i].text + '</option>');
+                        }
+                        $("#provinciasList").change(function () {
+                            valProvincia = $('#provinciasList option:selected').val()
+                            secondFunctionFilterUpdate(val, valProvincia)
+                        }); 
+
+
+                    },
+                    error: function (err, error) {
+                        alert(error);
+                    }
+                }
+            );
+        }
+
+        function secondFunctionFilterUpdate(val, valProvincia) {
+            $.ajax(
+                {
+                    url: '@Url.Action("FiltrarDepartamentoProvincia", "Trabajador")',
+                    data: { "idDepartamento": parseInt(val), "idProvincia": parseInt(valProvincia) },
+                    type: "get",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+                        var sel = $("#distritosList");
+
+                        sel.empty();
+                        for (var i = 0; i < response.response.length; i++) {
+                            sel.append('<option value="' + response.response[i].value + '">' + response.response[i].text + '</option>');
+                        }
+                    },
+                    error: function (err, error) {
+                        alert(error);
+                    }
+                }
+            );
+        }
+    </script>
+}
+
+
+<!-- Modal Agregar -->
+<div class="modal fade" id="modalAgregar" role="dialog">
+
+</div>
+
+
+<!-- Modal Actualizar -->
+<div class="modal fade" id="modalActualizar" role="dialog">
+    
+</div>
